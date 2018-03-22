@@ -1,0 +1,1 @@
+/usr/bin/cc -fPIC -g   CMakeFiles/opencl.dir/main.c.o CMakeFiles/opencl.dir/Tools/Timer.c.o CMakeFiles/opencl.dir/Tools/OpenCL_Wrapper.c.o  -o opencl -lOpenCL 

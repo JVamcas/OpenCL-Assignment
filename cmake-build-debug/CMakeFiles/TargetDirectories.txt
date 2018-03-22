@@ -1,0 +1,3 @@
+/home/petrus/CLionProjects/opencl/cmake-build-debug/CMakeFiles/rebuild_cache.dir
+/home/petrus/CLionProjects/opencl/cmake-build-debug/CMakeFiles/edit_cache.dir
+/home/petrus/CLionProjects/opencl/cmake-build-debug/CMakeFiles/opencl.dir
