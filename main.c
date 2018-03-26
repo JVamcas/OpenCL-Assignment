@@ -101,9 +101,12 @@ int main() {
 
     // Load a kernel
     if (!OpenCL_LoadKernel("../OpenCL/Kernel.cl", "Multiply")) return 1;
-
-    N = 999;
-    for (; N < 1000; N++) {
+    FILE *file = fopen("Test_results.txt","w");
+    fputs("N         Sequential     Process Time       Transfer Time          OpenCL\n",file);
+    N = 3;
+    for (; N < 33; N++) {
+        process_time  = 0;//reset to take new measurements
+        transfer_time = 0;
         size_t BufferSize = N * N * sizeof(float);
 
         // Allocate CPU RAM
@@ -125,11 +128,15 @@ int main() {
         // Process the matrices
         tic();
         Process_Serial();
-        printf("Serial: %lg ms\n", toc() / 1e-3);
+        fprintf(file,"%i         ",N);
+        fprintf(file,"%lg      ",toc()/1e-3);
+        //printf("Serial: %lg ms\n", toc() / 1e-3);
 
         tic();
         Process_OpenCL();
-        printf("\nOpenCL: %lg ms\n\n", toc() / 1e-3);
+        fprintf(file,"%lg          %lg         %lg\n",process_time,transfer_time,process_time+transfer_time);
+        //printf("\nOpenCL: %lg ms\n\n", toc() / 1e-3);
+        //printf("\nTransfer time %lg ms : Process Time %lg ms.", transfer_time,process_time);
 
         // Compare results
         //Compare();
@@ -145,7 +152,7 @@ int main() {
         OpenCL_FreeBuffer(OutputBuffer);
     }
     OpenCL_Destroy();
-
+    fclose(file);
 
     return 0;
 }

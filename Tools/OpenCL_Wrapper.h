@@ -39,6 +39,7 @@ bool OpenCL_WriteData(cl_mem Buffer, size_t Size, void *Data);
 bool OpenCL_Run(int N, size_t *LocalSize);
 
 void OpenCL_PrepareLocalSize(int N, size_t *LocalSize);
+double process_time, transfer_time;
 //------------------------------------------------------------------------------
 
 #endif

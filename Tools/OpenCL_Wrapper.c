@@ -181,7 +181,6 @@ void OpenCL_Destroy() {
     if (Kernel) clReleaseKernel(Kernel);
 }
 //------------------------------------------------------------------------------
-
 bool OpenCL_LoadKernel(const char *Filename, const char *Function) {
     cl_int error;
 
@@ -294,6 +293,7 @@ bool OpenCL_ConstantInt(cl_uint Argument, int Value) {
 //------------------------------------------------------------------------------
 
 bool OpenCL_ReadData(cl_mem Buffer, size_t Size, void *Data) {
+    tic();
     cl_int error = clEnqueueReadBuffer(
             Commands,
             Buffer,
@@ -303,16 +303,17 @@ bool OpenCL_ReadData(cl_mem Buffer, size_t Size, void *Data) {
             Data,
             0, 0, 0
     );
-    clFinish(Commands);
     if (error != CL_SUCCESS) {
         printf("Error: Failed to read buffer\n");
         return false;
-    }
+    }clFinish(Commands);//wait for data to be read
+   transfer_time+=toc()/1e-3;
     return true;
 }
 //------------------------------------------------------------------------------
 
 bool OpenCL_WriteData(cl_mem Buffer, size_t Size, void *Data) {
+   tic();
     cl_int error = clEnqueueWriteBuffer(
             Commands,
             Buffer,
@@ -322,11 +323,12 @@ bool OpenCL_WriteData(cl_mem Buffer, size_t Size, void *Data) {
             Data,
             0, 0, 0
     );
-    clFinish(Commands);
     if (error != CL_SUCCESS) {
         printf("Error: Failed to write buffer.\n");
         return false;
     }
+    clFinish(Commands);//wait for data to be transferred to device
+    transfer_time+=toc()/1e-3;
     return true;
 }
 //------------------------------------------------------------------------------
@@ -380,6 +382,7 @@ void OpenCL_PrepareLocalSize(int N, size_t *LocalSize) {
 //------------------------------------------------------------------------------
 
 bool OpenCL_Run(int N, size_t *LocalSize) {
+
     cl_int error;
 
     printf(
@@ -390,7 +393,7 @@ bool OpenCL_Run(int N, size_t *LocalSize) {
 
     // Execute the kernel
     size_t GlobalSize[2] = {N, N};
-
+    tic();
     error = clEnqueueNDRangeKernel(
             Commands,
             Kernel,
@@ -407,7 +410,7 @@ bool OpenCL_Run(int N, size_t *LocalSize) {
 
     // Wait for the commands to get serviced
     clFinish(Commands);
-
+    process_time+=toc()/1e-3;//time to process
     return true;
 }
 //------------------------------------------------------------------------------
